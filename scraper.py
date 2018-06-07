@@ -1,5 +1,4 @@
-from datetime import datetime as dt
-import datetime
+import week
 from lxml import html
 import requests
 import os
@@ -47,7 +46,7 @@ def getNextPath(tree):
         return nextNodes[0]
 
 def createFile():
-    name = getCurrentWeek()
+    name = week.getCurrentWeek()
     try:
         file = open(name, 'r')
         print("file for this week exists. Exiting.")
