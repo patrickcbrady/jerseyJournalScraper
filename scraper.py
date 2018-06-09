@@ -52,11 +52,8 @@ def createFile():
         print("file for this week exists. Exiting.")
         return
     except IOError:
-        file = open(name, 'w')
+        file = open("./unsent/"+name, 'w')
         separator = "\n\n====================================\n\n"
         file.write(separator.join(getJerseyJournalListings()).encode('utf-8').strip())
-
-def getCurrentWeek():
-    return (dt.today() - datetime.timedelta(dt.today().isoweekday() % 7)).strftime("%Y-%m-%d")
 
 createFile()
