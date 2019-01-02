@@ -31,8 +31,8 @@ def getWeehawkenHrefs(tree):
 
 def getFullAdTextFromInfoPage(infoPageUrl):
     tree = getPageTree(infoPageUrl)
-    text = tree.xpath('normalize-space(string(//div[@class="more_text"]/text()))')
-    return text;
+    text = tree.xpath('//div[@class="adtext_pad"]/descendant::*/text()[normalize-space()]')
+    return ' '.join(text);
 
 def getPageTree(jjUrl):
     page = requests.get(jjUrl)
@@ -48,7 +48,7 @@ def getNextPath(tree):
 def createFile():
     name = week.getCurrentWeek()
     try:
-        file = open(name, 'r')
+        file = open("./unsent/"+name, 'r')
         print("file for this week exists. Exiting.")
         return
     except IOError:
