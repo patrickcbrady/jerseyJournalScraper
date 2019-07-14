@@ -73,17 +73,11 @@ def get_ads_string(ad_dict):
         result += CAT_DELIM + LB + cat.upper() + LB + CAT_DELIM + LB + group_ads(ad_dict[cat]) + LB
     return result 
 
-def intersperse(l, sep):
-    result = [sep] * (len(l) * 2 - 1)
-    result[0::2] = l
-    return result
-
 def group_ads(ad_list):
     result = AD_DELIM_BARE + LB
     if ad_list:
         wrap_list = [LB.join(wrap(ad, AD_LINE_LEN)) for ad in ad_list]
-        pretty_list = intersperse(wrap_list, AD_DELIM)
-        result += ''.join(pretty_list).strip()
+        result += AD_DELIM.join(wrap_list).strip()
     else:
         result += 'None'
     result += AD_DELIM
