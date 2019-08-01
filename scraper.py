@@ -2,6 +2,8 @@ import week
 from lxml import html
 import requests
 import os
+import pickle
+from itertools import chain 
 
 def getJerseyJournalListings():
     jjDomain = 'http://classifieds.nj.com'
@@ -10,12 +12,13 @@ def getJerseyJournalListings():
     return listings
 
 def getWeehawkenListingsForSite(jjDomain, jjPath):
-    result = list()
+    ad_lists = list()
     while not (not jjPath):
         jjUrl = jjDomain + jjPath
         tree = getPageTree(jjUrl)
-        result.extend(getListOfWeehawkenAdText(jjDomain, tree))
+        ad_lists.append(getListOfWeehawkenAdText(jjDomain, tree))
         jjPath = getNextPath(tree)
+    result = list(chain.from_iterable(ad_lists))
     return result
 
 def getListOfWeehawkenAdText(domain, tree):
@@ -48,12 +51,12 @@ def getNextPath(tree):
 def createFile():
     name = week.getCurrentWeek()
     try:
-        file = open("./unsent/"+name, 'r')
+        file = open("./unsent/"+name, 'rb')
         print("file for this week exists. Exiting.")
         return
-    except IOError:
-        file = open("./unsent/"+name, 'w')
-        separator = "\n\n====================================\n\n"
-        file.write(separator.join(getJerseyJournalListings()).encode('utf-8').strip())
+    except (IOError, FileNotFoundError):
+        file = open("./unsent/"+name, 'wb')
+        listings = getJerseyJournalListings()
+        pickle.dump(listings, file)
 
 createFile()
