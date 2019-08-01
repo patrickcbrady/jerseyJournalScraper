@@ -13,6 +13,9 @@ CAT_DELIM = '-'*80
 AD_DELIM_BARE = '='*AD_LINE_LEN
 AD_DELIM = LB*2 + AD_DELIM_BARE + LB*2
 
+def get_empty_body(week):
+    return f'No Weehawken-related listings found for the week of {week}'
+
 def get_subscriber_list():
 	with open('./subscribers') as f:
 		reader = csv.reader(f)
@@ -31,6 +34,10 @@ def send_email_for_file(file):
     to = get_subscriber_list()
     subject = "Weehawken Public Notices for Week of %s" % (week)
     body = get_email_body(file) 
+    if not body:
+       print(f'No listings for week of {week}')
+       body = get_empty_body(week)
+
     email_text = LB.join(["From: "+sent_from, "To: " + ", ".join(to), "Subject: " + subject, LB, body])
 
     try:
@@ -48,10 +55,11 @@ def send_email(gmail_user, gmail_pw, to, email_text):
 
 def get_email_body(file):
     body = None
-    with open(file, 'rb') as pickle_file:
-        ad_list = pickle.load(pickle_file)
-        ad_dict = get_ads_by_category(ad_list)
-        body = get_ads_string(ad_dict)
+    if os.path.getsize(file) > 0:
+        with open(file, 'rb') as pickle_file:
+            ad_list = pickle.load(pickle_file)
+            ad_dict = get_ads_by_category(ad_list)
+            body = get_ads_string(ad_dict)
     return body
 
 def get_ads_by_category(listings):
