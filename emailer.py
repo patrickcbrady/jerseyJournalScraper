@@ -29,28 +29,28 @@ def get_subscriber_list():
 def get_credentials() -> Tuple[str, str]:
     return open('./deviceu','r').read().replace(LB,''), open('./devicepw','r').read().replace(LB,'')
 
-def get_email_text(sent_from: str, file: str) -> str:
-    week = os.path.basename(file)
-    to = get_subscriber_list()
+def get_email_text(week: str, sent_from: str, send_to: str, file: str) -> str:
     subject = "Weehawken Public Notices for Week of %s" % (week)
     body = get_email_body(file) 
     if not body:
        print(f'No listings for week of {week}')
        body = get_empty_body(week)
 
-    return LB.join(["From: "+sent_from, "To: " + ", ".join(to), "Subject: " + subject, LB, body])
+    return LB.join(["From: "+sent_from, "To: " + ", ".join(send_to), "Subject: " + subject, LB, body])
 
 def send_email_for_file(file):
+    week = os.path.basename(file)
     gmail_user, gmail_pw = get_credentials()
-    email_text = get_email_text(gmail_user, file)
-    send_email(gmail_user, gmail_pw, to, email_text)
+    send_to = get_subscriber_list()
+    email_text = get_email_text(week, gmail_user, send_to, file)
+    send_email(gmail_user, gmail_pw, send_to, email_text, week)
 
-def send_email(gmail_user, gmail_pw, to, email_text):
+def send_email(gmail_user, gmail_pw, send_to, email_text, week):
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(gmail_user, gmail_pw)
-        server.sendmail(gmail_user, to, email_text.encode('utf-8'))
+        server.sendmail(gmail_user, send_to, email_text.encode('utf-8'))
         server.close()
         print('Email sent Successfully for', week)
     except Exception as e:
@@ -60,7 +60,17 @@ def get_email_body(file: str) -> str:
     body = None
     date = os.path.basename(file)
     def is_recent(ad: str) -> bool:
-        ad_date = arrow.get(find_last_date_in_ad(ad), 'MM/DD/YY')
+        def last_date_to_arrow(last_date: str):
+            for fmt in ('MM/DD/YY', 'M/DD/YY', 'MM/D/YY', 'M/D/YY', 'MM/DD/YYYY', 'M/DD/YYYY', 'MM/D/YYYY', 'M/D/YYYY'):
+                try:
+                    return arrow.get(last_date, fmt)
+                except arrow.parser.ParserMatchError:
+                    pass
+
+        ad_date_str = find_last_date_in_ad(ad)
+        if ad_date_str is None:
+            return True
+        ad_date = last_date_to_arrow(ad_date_str)
         last_week = arrow.get(date).shift(days=-7)
         res = ad_date > last_week
         # print(f'Is {ad_date.format("YYYY/MM/DD")} after '
@@ -113,6 +123,6 @@ def test_categories(file):
 
 def find_last_date_in_ad(ad: str) -> Optional[str]:
     match = None
-    for match in re.finditer(r'\d{2}/\d{2}/\d{2}', ad):
+    for match in re.finditer(r'\d{1,2}/\d{1,2}/\d{2,4}', ad):
         pass
-    return match.group(0)
+    return None if not match else match.group(0)
