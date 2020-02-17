@@ -29,18 +29,21 @@ def get_subscriber_list() -> List[str]:
 def get_credentials() -> Tuple[str, str]:
     return open('./deviceu','r').read().replace(LB,''), open('./devicepw','r').read().replace(LB,'')
 
-def get_email_text(week: str, sent_from: str, send_to: str, file: str) -> str:
-    subject = "Weehawken Public Notices for Week of %s" % (week)
-    body = get_email_body(file) 
+def get_body_for_week(week: str, file: str) -> str:
+    body = get_email_body(file)
     if not body:
-       print(f'No listings for week of {week}')
-       body = get_empty_body(week)
+        print(f'No listings for week of {week}')
+        body = get_empty_body(week)
+    return body
 
+def get_email_text(sent_from: str, send_to: str, subject: str, body: str) -> str:
     return LB.join(["From: "+sent_from, "To: " + ", ".join(send_to), "Subject: " + subject, LB, body])
 
 def send_email_for_file(file):
     week = os.path.basename(file)
-    email_text = get_email_text(week, gmail_user, send_to, file)
+    subject = f'Weehawken Public Notices for Week of {week}'
+    body = get_body_for_week(week, file)
+    email_text = get_email_text(gmail_user, send_to, subject, body)
     send_email_to_subscribers(email_text, f'Email sent successfully for {week}')
 
 def send_email_to_subscribers(body_text: str, success_msg: Optional[str] = None):
