@@ -40,21 +40,25 @@ def get_email_text(week: str, sent_from: str, send_to: str, file: str) -> str:
 
 def send_email_for_file(file):
     week = os.path.basename(file)
+    email_text = get_email_text(week, gmail_user, send_to, file)
+    send_email_to_subscribers(email_text, f'Email sent successfully for {week}')
+
+def send_email_to_subscribers(body_text: str, success_msg: Optional[str] = None):
     gmail_user, gmail_pw = get_credentials()
     send_to = get_subscriber_list()
-    email_text = get_email_text(week, gmail_user, send_to, file)
-    send_email(gmail_user, gmail_pw, send_to, email_text, week)
-
-def send_email(gmail_user, gmail_pw, send_to, email_text, week):
     try:
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.ehlo()
-        server.login(gmail_user, gmail_pw)
-        server.sendmail(gmail_user, send_to, email_text.encode('utf-8'))
-        server.close()
-        print('Email sent Successfully for', week)
+        send_email(gmail_user, gmail_pw, send_to, body_text)
+        if success_msg:
+            print(success_msg)
     except Exception as e:
         print('Something went wrong:', e)
+
+def send_email(gmail_user, gmail_pw, send_to, email_text):
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.ehlo()
+    server.login(gmail_user, gmail_pw)
+    server.sendmail(gmail_user, send_to, email_text.encode('utf-8'))
+    server.close()
 
 def get_email_body(file: str) -> str:
     body = None
