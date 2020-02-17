@@ -17,10 +17,10 @@ CAT_DELIM = '-'*80
 AD_DELIM_BARE = '='*AD_LINE_LEN
 AD_DELIM = LB*2 + AD_DELIM_BARE + LB*2
 
-def get_empty_body(week: str):
+def get_empty_body(week: str) -> str:
     return f'No Weehawken-related listings found for the week of {week}'
 
-def get_subscriber_list():
+def get_subscriber_list() -> List[str]:
 	with open('./subscribers') as f:
 		reader = csv.reader(f)
 		emails = list(chain.from_iterable([list(row) for row in reader]))
@@ -98,13 +98,13 @@ def get_ads_by_category(ads: set) -> List[str]:
     result['Miscellaneous'] = list(ads)
     return result
 
-def get_ads_string(ad_dict):
+def get_ads_string(ad_dict) -> str:
     result = ''
     for cat in ad_dict.keys():
         result += CAT_DELIM + LB + cat.upper() + LB + CAT_DELIM + LB + group_ads(ad_dict[cat]) + LB
     return result 
 
-def group_ads(ad_list):
+def group_ads(ad_list) -> str:
     result = AD_DELIM_BARE + LB
     if ad_list:
         wrap_list = [LB.join(wrap(ad, AD_LINE_LEN)) for ad in ad_list]
