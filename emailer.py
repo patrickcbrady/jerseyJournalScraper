@@ -43,14 +43,14 @@ def send_email_for_file(file):
     week = os.path.basename(file)
     subject = f'Weehawken Public Notices for Week of {week}'
     body = get_body_for_week(week, file)
-    email_text = get_email_text(gmail_user, send_to, subject, body)
-    send_email_to_subscribers(email_text, f'Email sent successfully for {week}')
+    send_email_to_subscribers(subject, body, f'Email sent successfully for {week}')
 
-def send_email_to_subscribers(body_text: str, success_msg: Optional[str] = None):
+def send_email_to_subscribers(subject: str, body: str, success_msg: Optional[str] = None):
     gmail_user, gmail_pw = get_credentials()
     send_to = get_subscriber_list()
+    email_text = get_email_text(gmail_user, send_to, subject, body)
     try:
-        send_email(gmail_user, gmail_pw, send_to, body_text)
+        send_email(gmail_user, gmail_pw, send_to, email_text)
         if success_msg:
             print(success_msg)
     except Exception as e:
