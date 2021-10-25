@@ -99,8 +99,9 @@ def get_email_body(file: str) -> str:
     if os.path.getsize(file) > 0:
         with open(file, 'rb') as pickle_file:
             ad_list = pickle.load(pickle_file)
-            print(f'{len(ad_list)} ads found.')
-            ad_dict = get_ads_by_category(ad_list)
+            ads = set(ad_list)
+            print(f'{len(ads)} ads found.')
+            ad_dict = get_ads_by_category(ads)
             body = get_ads_string(ad_dict)
     return body
 
