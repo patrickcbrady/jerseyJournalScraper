@@ -99,9 +99,8 @@ def get_email_body(file: str) -> str:
     if os.path.getsize(file) > 0:
         with open(file, 'rb') as pickle_file:
             ad_list = pickle.load(pickle_file)
-            ads = set([ad for ad in ad_list if is_recent(ad)])
-            print(f'{len(ads)} new ads found. {len(ad_list) - len(ads)} were from previous weeks')
-            ad_dict = get_ads_by_category(ads)
+            print(f'{len(ad_list)} ads found.')
+            ad_dict = get_ads_by_category(ad_list)
             body = get_ads_string(ad_dict)
     return body
 
