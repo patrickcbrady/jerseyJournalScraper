@@ -5,6 +5,7 @@ from typing import List
 import arrow
 import requests
 from lxml import html
+from lxml.html import HtmlElement
 
 import week
 
@@ -50,7 +51,7 @@ def get_full_ad_text_info_from_page(info_page_url) -> str:
     return '\n'.join(text)
 
 
-def get_page_tree(jj_url):
+def get_page_tree(jj_url) -> HtmlElement:
     """return tree for given NJ.com classifieds URL"""
     page = requests.get(jj_url, headers=HEADERS)
     return html.fromstring(page.content)
