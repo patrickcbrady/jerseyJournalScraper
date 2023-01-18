@@ -58,12 +58,9 @@ def send_email_to_subscribers(subject: str, body: str, success_msg: Optional[str
     gmail_user, gmail_pw = get_credentials()
     send_to = get_subscriber_list()
     email_text = get_email_text(gmail_user, send_to, subject, body)
-    try:
-        send_email(gmail_user, gmail_pw, send_to, email_text)
-        if success_msg:
-            print(success_msg)
-    except Exception as e:
-        print('Something went wrong:', e)
+    send_email(gmail_user, gmail_pw, send_to, email_text)
+    if success_msg:
+        print(success_msg)
 
 
 def send_email(gmail_user, gmail_pw, send_to, email_text):
