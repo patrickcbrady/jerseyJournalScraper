@@ -35,10 +35,10 @@ def get_weehawken_listings_for_site(jj_domain, jj_path) -> List[str]:
         # links are retrieved in order so we can break early once we're past our date range
         ad_date = arrow.get(ad_dates[i])
         age_days = (current_week - ad_date).days
-        # site format changed on 10/10 so ensure that first run after fix will backfill
-        if age_days >= 8 and current_week > arrow.get('2021-10-24'):
+        # site format changed on 4/30/23 so ensure that first run after fix will backfill
+        if age_days >= 8 and current_week > arrow.get('2023-05-22'):
             break
-        elif ad_date < arrow.get('2021-10-03'):
+        elif ad_date < arrow.get('2023-04-24'):
             break
         result.append(get_full_ad_text_info_from_page(link))
     return result
