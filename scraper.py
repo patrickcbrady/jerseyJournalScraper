@@ -19,7 +19,7 @@ def get_jersey_journal_listings() -> List[str]:
     return the text of each Weehawken public notice listing for the current week
     """
     jj_domain = 'https://classifieds.nj.com'
-    jj_path = '/marketplace/nj/search/query?categoryId=2&searchProfile=general&source=nj&page=1&size=100&view=list&showExtended=false&startRange=&keywords=weehawken&customField1=The+Jersey+Journal'
+    jj_path = '/nj/search/query?categoryId=2&searchProfile=general&source=nj&page=1&size=100&view=list&showExtended=false&keywords=weehawken&ordering=BY_DATE_DEC'
     listings = get_weehawken_listings_for_site(jj_domain, jj_path)
     return listings
 
